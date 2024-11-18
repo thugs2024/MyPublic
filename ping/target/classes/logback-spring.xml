@@ -1,0 +1,52 @@
+<configuration>
+
+    <!-- 定义控制台输出Appender -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+
+    <property name="DATE_PROPERTY" value="${DATE_VARIABLE}"/>
+    <!-- 通过系统属性获取进程名（假设在应用启动时设置了进程名相关系统属性） -->
+    <property name="PROCESS_NAME_PROPERTY" value="${PROCESS_NAME_VARIABLE}"/>
+
+    <property name="LOG_FILE_NAME" value="pongservice-${DATE_PROPERTY}-${PROCESS_NAME_PROPERTY}.log"/>
+
+
+    <appender name="MYLOG" class="ch.qos.logback.core.FileAppender">
+
+        <file>D:\logs\${DATE_PROPERTY}</file>
+
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+
+    </appender>
+
+    <appender name="SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator>
+            <key>processName-date</key>
+            <defaultValue>pingLogNormal</defaultValue>
+            <converter class="ch.qos.logback.classic.sift.MDCBasedDiscriminator">
+                <key>processName-date</key>
+                <defaultValue>pingLogNormal</defaultValue>
+            </converter>
+        </discriminator>
+        <sift>
+            <appender name="FILE - ${processName - date}" class="ch.qos.logback.core.FileAppender">
+                <file>D:\logs\${processName-date}.log</file>
+                <encoder>
+                    <pattern>%date %level [%thread] %logger{10} [%file:%line] %msg%n</pattern>
+                </encoder>
+            </appender>
+        </sift>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="SIFT" />
+        <appender-ref ref="STDOUT" />
+    </root>
+
+</configuration>
