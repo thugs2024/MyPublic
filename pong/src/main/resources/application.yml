@@ -1,2 +1,17 @@
 server:
   port: 8090
+
+spring:
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: local
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: CONSUMER_PONG
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer

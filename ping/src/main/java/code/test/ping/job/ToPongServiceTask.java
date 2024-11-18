@@ -3,6 +3,7 @@ package code.test.ping.job;
 import code.test.ping.mongo.PingProcess;
 import code.test.ping.mongo.PingProcessRepository;
 import code.test.ping.service.ToPongService;
+import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,15 +42,26 @@ public class ToPongServiceTask {
     @Scheduled(cron = "* * * * * *")
     public void ToPongServiceTask() throws IOException{
 
+        //SET PARAM
         setMDC();
 
+        //run
+        excuteJob();
+
+    }
+
+
+    private void excuteJob() throws IOException{
         // 创建或打开文件
         File lockFile = new File(LOCK_FILE_PATH);
         RandomAccessFile raf = new RandomAccessFile(lockFile, "rw");
         FileChannel channel = raf.getChannel();
 
-        // 尝试获取锁
-        FileLock lock = channel.tryLock();
+        logger.info("try to get file lock time is {}", System.currentTimeMillis());
+
+        // try to get file lock
+        // 阻塞式锁，适用于当前模拟场景与演示
+        FileLock lock = channel.lock();
 
         //use file lock to control multipal jvm process limit 2qps
         if (lock!= null) {
@@ -58,6 +70,8 @@ public class ToPongServiceTask {
             boolean limited = false;
             try {
                 PingProcess pingProcess = getCountFromDB(currentSecond);
+
+                logger.info("get pingprocess info {}", null == pingProcess?null:JSON.toJSON(pingProcess).toString());
                 Integer countInSecond = 0;
                 String idParam = null;
                 if (null != pingProcess){
@@ -78,6 +92,8 @@ public class ToPongServiceTask {
                 }
 
             }finally {
+
+                logger.info("filelock release time is {}", System.currentTimeMillis() );
                 lock.release();
                 channel.close();
                 raf.close();
@@ -95,6 +111,7 @@ public class ToPongServiceTask {
         }
 
     }
+
 
     @Transactional
     private void updateCountInDB(String id, Integer count, Long currentSecond) {
@@ -130,6 +147,14 @@ public class ToPongServiceTask {
         RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
         String processName = runtimeMXBean.getName();
         MDC.put("processName-date", "ping-service-"+processName + "-" + java.time.LocalDate.now().toString());
+
+    }
+
+    private void setMDCTest(){
+
+        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+        String processName = runtimeMXBean.getName();
+        MDC.put("processName-date", "pingserviceRequstTime");
 
     }
 }
