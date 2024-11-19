@@ -24,6 +24,12 @@ public class RequestRateLimitFilter implements WebFilter {
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         long currentTime = System.currentTimeMillis();
         refillTokens(currentTime);
+
+        if (exchange == null && chain == null){
+            exchange.getResponse().setStatusCode(HttpStatusCode.valueOf(500));
+            return exchange.getResponse().setComplete();
+        }
+
         if (tokens.get() > 0) {
             tokens.decrementAndGet();
             return chain.filter(exchange);
@@ -33,7 +39,7 @@ public class RequestRateLimitFilter implements WebFilter {
         }
     }
 
-    public void refillTokens(long currentTime) {
+    private void refillTokens(long currentTime) {
         long timeSinceLastRefill = currentTime - lastRefillTime.get();
         int tokensToAdd = (int) (timeSinceLastRefill / 1000 * TOKEN_RATE);
         tokensToAdd = Math.min(tokensToAdd, BUCKET_CAPACITY - tokens.get());
