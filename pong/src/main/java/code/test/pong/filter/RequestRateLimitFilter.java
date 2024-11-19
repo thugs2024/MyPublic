@@ -33,7 +33,7 @@ public class RequestRateLimitFilter implements WebFilter {
         }
     }
 
-    public void refillTokens(long currentTime) {
+    private void refillTokens(long currentTime) {
         long timeSinceLastRefill = currentTime - lastRefillTime.get();
         int tokensToAdd = (int) (timeSinceLastRefill / 1000 * TOKEN_RATE);
         tokensToAdd = Math.min(tokensToAdd, BUCKET_CAPACITY - tokens.get());

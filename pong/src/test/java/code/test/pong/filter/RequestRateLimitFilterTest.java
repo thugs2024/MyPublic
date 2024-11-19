@@ -13,10 +13,6 @@ public class RequestRateLimitFilterTest {
     @Test
     void test() {
 
-        if (null == requestRateLimitFilter){
-            requestRateLimitFilter = new RequestRateLimitFilter();
-        }
-        requestRateLimitFilter.refillTokens(555555L);
     }
 
 
