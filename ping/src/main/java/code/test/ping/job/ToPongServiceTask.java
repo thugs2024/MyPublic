@@ -150,11 +150,4 @@ public class ToPongServiceTask {
 
     }
 
-    private void setMDCTest(){
-
-        RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
-        String processName = runtimeMXBean.getName();
-        MDC.put("processName-date", "pingserviceRequstTime");
-
-    }
 }

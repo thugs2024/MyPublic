@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/MyRepositoryForLocal.iml" filepath="$PROJECT_DIR$/.idea/MyRepositoryForLocal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ping/ping.iml" filepath="$PROJECT_DIR$/ping/ping.iml" />
+      <module fileurl="file://$PROJECT_DIR$/pong.iml" filepath="$PROJECT_DIR$/pong.iml" />
     </modules>
   </component>
 </project>

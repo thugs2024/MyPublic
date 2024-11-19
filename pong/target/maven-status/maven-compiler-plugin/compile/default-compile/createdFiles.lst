@@ -1,4 +1,5 @@
 code\test\pong\handler\HelloWorldHandler.class
+code\test\pong\kafka\KafkaConsumerListener.class
 code\test\pong\filter\RequestRateLimitFilter.class
 code\test\pong\PongService.class
 code\test\pong\config\FilterConfig.class
